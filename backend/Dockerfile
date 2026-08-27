@@ -20,7 +20,6 @@ RUN pip install -r requirements.txt
 # Copy application source and scripts
 COPY app/ ./app/
 COPY scripts/ ./scripts/
-COPY tests/ ./tests/
 
 # Create persistent data directories
 RUN mkdir -p /app/data/chroma /app/data/knowledge_base
