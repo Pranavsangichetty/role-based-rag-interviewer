@@ -17,9 +17,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# Copy application source and scripts
+# Copy application source
 COPY app/ ./app/
-COPY scripts/ ./scripts/
 
 # Create persistent data directories
 RUN mkdir -p /app/data/chroma /app/data/knowledge_base
