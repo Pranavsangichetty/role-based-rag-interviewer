@@ -14,11 +14,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy and install python dependencies
-COPY requirements.txt .
+COPY backend/requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
-# Copy application source
-COPY app/ ./app/
+# Copy application source and scripts
+COPY backend/app/ ./app/
+COPY backend/scripts/ ./scripts/
 
 # Create persistent data directories
 RUN mkdir -p /app/data/chroma /app/data/knowledge_base

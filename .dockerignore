@@ -1,0 +1,45 @@
+# Python & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Environment Files
+.env
+.env.*
+!.env.example
+
+# Git
+.git/
+.gitignore
+
+# Frontend build & dependencies
+frontend/node_modules/
+node_modules/
+frontend/.next/
+.next/
+out/
+build/
+dist/
+
+# Local databases & vector stores
+backend/data/interview.db
+data/interview.db
+backend/data/chroma/
+data/chroma/
+*.db
+*.sqlite3
+
+# OS artifacts
+.DS_Store
+Thumbs.db
