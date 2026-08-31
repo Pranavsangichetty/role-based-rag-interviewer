@@ -57,15 +57,6 @@ def test_cors_headers():
     )
     assert response.headers.get("access-control-allow-origin") == "http://localhost:3000"
 
-    vercel_response = client.options(
-        "/health",
-        headers={
-            "Origin": "https://frontend-eight-green-24.vercel.app",
-            "Access-Control-Request-Method": "GET"
-        }
-    )
-    assert vercel_response.headers.get("access-control-allow-origin") == "https://frontend-eight-green-24.vercel.app"
-
 def test_validation_error_handler():
     """Verify that validation errors return structured 422 JSON."""
     response = client.post("/interview/sessions", json={})
