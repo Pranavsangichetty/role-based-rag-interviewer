@@ -1,7 +1,8 @@
+import io
 import logging
 import re
 from pathlib import Path
-from typing import Optional
+from typing import BinaryIO, Optional, Union
 from pypdf import PdfReader
 
 try:
@@ -15,12 +16,12 @@ logger = logging.getLogger("rag_interviewer.parser")
 # PDF PARSING
 # ============================================================
 
-def parse_pdf(pdf_path: str | Path) -> str:
+def parse_pdf(pdf_input: Union[str, Path, BinaryIO, io.BytesIO]) -> str:
     """
-    Extract text from a PDF using pypdf, falling back to PyMuPDF if available.
+    Extract text from a PDF path or file-like object using pypdf, falling back to PyMuPDF if available.
 
     Args:
-        pdf_path: Path to the PDF file.
+        pdf_input: Path to the PDF file or a file-like/BytesIO stream.
 
     Returns:
         Extracted text as a string (empty string if blank or unextractable).
@@ -29,22 +30,31 @@ def parse_pdf(pdf_path: str | Path) -> str:
         FileNotFoundError: If the PDF file does not exist.
         ValueError: If the file is not a valid PDF file.
     """
-    path = Path(pdf_path)
-
-    if not path.exists():
-        raise FileNotFoundError(f"PDF file not found: {pdf_path}")
-
-    if not path.is_file():
-        raise ValueError(f"PDF path is not a file: {pdf_path}")
-
-    if path.suffix.lower() != ".pdf":
-        raise ValueError("Only PDF files are supported.")
+    if isinstance(pdf_input, (str, Path)):
+        path = Path(pdf_input)
+        if not path.exists():
+            raise FileNotFoundError(f"PDF file not found: {pdf_input}")
+        if not path.is_file():
+            raise ValueError(f"PDF path is not a file: {pdf_input}")
+        if path.suffix.lower() != ".pdf":
+            raise ValueError("Only PDF files are supported.")
+        target = str(path)
+        name = path.name
+    else:
+        # File-like object / BytesIO / Streamlit UploadedFile
+        if hasattr(pdf_input, "name") and pdf_input.name:
+            if not str(pdf_input.name).lower().endswith(".pdf"):
+                raise ValueError("Only PDF files are supported.")
+            name = str(pdf_input.name)
+        else:
+            name = "uploaded.pdf"
+        target = pdf_input
 
     extracted_text = ""
 
     # Method 1: pypdf
     try:
-        reader = PdfReader(str(path))
+        reader = PdfReader(target)
         pages = []
         for page in reader.pages:
             try:
@@ -57,25 +67,35 @@ def parse_pdf(pdf_path: str | Path) -> str:
         if extracted_text:
             return extracted_text
     except Exception as exc:
-        logger.debug(f"pypdf extraction notice for {path.name}: {exc}")
+        logger.debug(f"pypdf extraction notice for {name}: {exc}")
 
     # Method 2: PyMuPDF fallback
     if fitz is not None:
         try:
-            document = fitz.open(str(path))
-            pages = []
-            for page in document:
-                text = page.get_text("text") or ""
-                if text.strip():
-                    pages.append(text)
-            document.close()
-            extracted_text = "\n".join(pages).strip()
-            if extracted_text:
-                return extracted_text
-        except Exception as exc:
-            logger.debug(f"PyMuPDF fallback failed for {path.name}: {exc}")
+            if isinstance(target, str):
+                document = fitz.open(target)
+            elif hasattr(target, "read"):
+                if hasattr(target, "seek"):
+                    target.seek(0)
+                stream_bytes = target.read()
+                document = fitz.open(stream=stream_bytes, filetype="pdf")
+            else:
+                document = None
 
-    return ""
+            if document:
+                pages = []
+                for page in document:
+                    text = page.get_text("text") or ""
+                    if text.strip():
+                        pages.append(text)
+                document.close()
+                extracted_text = "\n".join(pages).strip()
+                if extracted_text:
+                    return extracted_text
+        except Exception as exc:
+            logger.debug(f"PyMuPDF extraction notice for {name}: {exc}")
+
+    return extracted_text
 
 
 # ============================================================
