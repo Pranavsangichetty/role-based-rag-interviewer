@@ -1,5 +1,6 @@
 # Role-Based RAG Interviewer
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://role-based-rag-interviewer-hgya5sg8jkzhmknkerf6yy.streamlit.app/)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Next.js](https://img.shields.io/badge/Next.js-14%20App%20Router-black.svg?logo=next.js&logoColor=white)](https://nextjs.org/)
@@ -9,6 +10,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An intelligent, resume-aware technical interview system powered by **Role-Specific Retrieval-Augmented Generation (RAG)**, automated multi-rubric evaluation, and persistent interview sessions.
+
+---
+
+## 🌐 Live Demo
+
+🚀 **Experience the live interactive technical interview deployed on Streamlit Community Cloud:**
+👉 **[Launch Live Demo](https://role-based-rag-interviewer-hgya5sg8jkzhmknkerf6yy.streamlit.app/)**
 
 ---
 
